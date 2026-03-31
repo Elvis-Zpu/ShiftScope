@@ -1,0 +1,19 @@
+{
+  "artifact_type": "dummy_index_output",
+  "dataset_version_id": 1,
+  "model_name": "dummy-encoder",
+  "source_embedding_artifact": "artifacts/embeddings/1/dummy-encoder.json",
+  "source_embedding_summary": {
+    "artifact_type": "dummy_embedding_output",
+    "dataset_version_id": 1,
+    "dataset_id": 1,
+    "version_tag": "v1",
+    "original_filename": "shift1.txt",
+    "source_storage_path": "datasets/1/v1/shift1.txt",
+    "model_name": "dummy-encoder",
+    "generated_at": "2026-03-31T03:36:08.072295",
+    "note": "placeholder artifact before real embedding pipeline"
+  },
+  "generated_at": "2026-03-31T03:36:31.063667",
+  "note": "placeholder index artifact before real FAISS pipeline"
+}
