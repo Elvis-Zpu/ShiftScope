@@ -8,6 +8,8 @@ from app.api.dataset_versions import router as dataset_versions_router
 from app.services.storage import ensure_bucket_exists
 from app.api.jobs import router as jobs_router
 from app.api.indexes import router as indexes_router
+from app.api.search import router as search_router
+from app.api.eval import router as eval_router
 
 import app.models  # noqa: F401
 
@@ -37,3 +39,5 @@ app.include_router(datasets_router)
 app.include_router(dataset_versions_router)
 app.include_router(jobs_router)
 app.include_router(indexes_router)
+app.include_router(search_router)
+app.include_router(eval_router)
