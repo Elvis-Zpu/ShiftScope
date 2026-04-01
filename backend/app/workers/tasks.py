@@ -4,8 +4,10 @@ from datetime import datetime
 from app.db.session import SessionLocal
 from app.models.job import Job
 from app.models.dataset_version import DatasetVersion
+from app.models.data_item import DataItem
 from app.models.index import Index
-from app.services.artifacts import ensure_artifact_dirs, write_json_artifact, read_json_artifact
+from app.services.artifacts import ensure_artifact_dirs, write_json_artifact
+from app.services.search import build_lexical_index
 from app.workers.celery_app import celery_app
 
 
@@ -91,24 +93,41 @@ def run_index_job(job_id: int):
         dataset_version_id = params.get("dataset_version_id")
         model_name = params.get("model_name", "dummy-encoder")
 
-        embed_artifact_path = f"artifacts/embeddings/{dataset_version_id}/{model_name}.json"
-        if not os.path.exists(embed_artifact_path):
-            raise ValueError(f"Embedding artifact not found: {embed_artifact_path}")
+        dataset_version = (
+            db.query(DatasetVersion)
+            .filter(DatasetVersion.id == dataset_version_id)
+            .first()
+        )
+        if not dataset_version:
+            raise ValueError(f"DatasetVersion {dataset_version_id} not found")
 
-        embed_artifact = read_json_artifact(embed_artifact_path)
+        items = (
+            db.query(DataItem)
+            .filter(DataItem.dataset_version_id == dataset_version_id)
+            .order_by(DataItem.id.asc())
+            .all()
+        )
+        if not items:
+            raise ValueError(f"No DataItems found for dataset_version_id={dataset_version_id}")
+
+        item_payloads = [
+            {
+                "item_id": item.id,
+                "item_key": item.item_key,
+                "text_content": item.text_content,
+                "image_path": item.image_path,
+                "metadata_json": item.metadata_json,
+            }
+            for item in items
+        ]
+
+        lexical_index_payload = build_lexical_index(item_payloads)
+        lexical_index_payload["dataset_version_id"] = dataset_version_id
+        lexical_index_payload["model_name"] = model_name
+        lexical_index_payload["generated_at"] = datetime.utcnow().isoformat()
 
         index_relative_path = f"indexes/{dataset_version_id}/{model_name}.json"
-        index_payload = {
-            "artifact_type": "dummy_index_output",
-            "dataset_version_id": dataset_version_id,
-            "model_name": model_name,
-            "source_embedding_artifact": embed_artifact_path,
-            "source_embedding_summary": embed_artifact,
-            "generated_at": datetime.utcnow().isoformat(),
-            "note": "placeholder index artifact before real FAISS pipeline"
-        }
-
-        index_full_path = write_json_artifact(index_relative_path, index_payload)
+        index_full_path = write_json_artifact(index_relative_path, lexical_index_payload)
 
         index_record = Index(
             dataset_version_id=dataset_version_id,
@@ -122,12 +141,13 @@ def run_index_job(job_id: int):
 
         job.status = "success"
         job.result_json = {
-            "message": "index artifact generated",
+            "message": "lexical index artifact generated",
             "dataset_version_id": dataset_version_id,
             "model_name": model_name,
             "artifact_path": index_full_path,
             "artifact_exists": os.path.exists(index_full_path),
             "index_id": index_record.id,
+            "num_items": len(items),
         }
         job.finished_at = datetime.utcnow()
         db.commit()

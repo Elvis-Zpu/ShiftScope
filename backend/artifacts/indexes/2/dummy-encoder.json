@@ -1,0 +1,72 @@
+{
+  "index_type": "lexical-baseline",
+  "num_items": 3,
+  "items": [
+    {
+      "item_id": 1,
+      "item_key": "item-1",
+      "text_content": "A red vintage car parked on a quiet street.",
+      "image_path": "images/car1.jpg",
+      "metadata_json": {
+        "category": "vehicle",
+        "color": "red"
+      },
+      "tokens": [
+        "a",
+        "car",
+        "on",
+        "parked",
+        "quiet",
+        "red",
+        "street",
+        "vehicle",
+        "vintage"
+      ]
+    },
+    {
+      "item_id": 2,
+      "item_key": "item-2",
+      "text_content": "A small white dog sitting on a wooden chair.",
+      "image_path": "images/dog1.jpg",
+      "metadata_json": {
+        "category": "animal",
+        "color": "white"
+      },
+      "tokens": [
+        "a",
+        "animal",
+        "chair",
+        "dog",
+        "on",
+        "sitting",
+        "small",
+        "white",
+        "wooden"
+      ]
+    },
+    {
+      "item_id": 3,
+      "item_key": "item-3",
+      "text_content": "A bowl of ramen with egg and sliced pork.",
+      "image_path": "images/ramen1.jpg",
+      "metadata_json": {
+        "category": "food"
+      },
+      "tokens": [
+        "a",
+        "and",
+        "bowl",
+        "egg",
+        "food",
+        "of",
+        "pork",
+        "ramen",
+        "sliced",
+        "with"
+      ]
+    }
+  ],
+  "dataset_version_id": 2,
+  "model_name": "dummy-encoder",
+  "generated_at": "2026-04-01T00:05:45.490265"
+}
