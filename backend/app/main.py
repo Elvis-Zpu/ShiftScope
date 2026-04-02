@@ -11,6 +11,7 @@ from app.api.jobs import router as jobs_router
 from app.api.indexes import router as indexes_router
 from app.api.search import router as search_router
 from app.api.eval import router as eval_router
+from app.api.search_logs import router as search_logs_router
 
 import app.models  # noqa: F401
 
@@ -52,3 +53,4 @@ app.include_router(jobs_router)
 app.include_router(indexes_router)
 app.include_router(search_router)
 app.include_router(eval_router)
+app.include_router(search_logs_router)
